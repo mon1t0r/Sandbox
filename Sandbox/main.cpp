@@ -82,10 +82,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
         }
         else
         {
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
-
-
+            DrawMain();
 
             SwapBuffers(hDC);
             Sleep(1);
@@ -169,11 +166,11 @@ void DisableOpenGL(HWND hwnd, HDC hDC, HGLRC hRC)
 
 void Initialize()
 {
-    AllocConsole();
+    /*AllocConsole();
     FILE* fpstdin = stdin, * fpstdout = stdout, * fpstderr = stderr;
     freopen_s(&fpstdin, "CONIN$", "r", stdin);
     freopen_s(&fpstdout, "CONOUT$", "w", stdout);
-    freopen_s(&fpstderr, "CONOUT$", "w", stderr);
+    freopen_s(&fpstderr, "CONOUT$", "w", stderr);*/
 
     gladLoadGL();
     InitializeGame();
