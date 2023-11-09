@@ -14,8 +14,8 @@ void DrawMain()
     glClear(GL_COLOR_BUFFER_BIT);
     
     float col;
-    double start_x = 1.0 / (double)FIELD_WIDTH - 1.0;
-    double start_y = 1.0 / (double)FIELD_HEIGHT - 1.0;
+    float start_x = 1.0f / (float)FIELD_WIDTH - 1.0f;
+    float start_y = 1.0f / (float)FIELD_HEIGHT - 1.0f;
 
     glPointSize(frame_width / (float)FIELD_WIDTH);
     glBegin(GL_POINTS);
@@ -24,8 +24,7 @@ void DrawMain()
             {
                 col = matrix[i][j] ? 1.0f : 0.5f;
                 glColor3f(col, col, col);
-                //glVertex2f(start_x + i * 2.0f / (float)FIELD_WIDTH, start_y + j * 2.0f / (float)FIELD_HEIGHT);
-                glVertex2d(start_x + i * 2.0 / (double)FIELD_WIDTH, start_y + j * 2.0 / (double)FIELD_HEIGHT);
+                glVertex2f(start_x + i * 2.0f / (float)FIELD_WIDTH, start_y + j * 2.0f / (float)FIELD_HEIGHT);
             }
     glEnd();
 
