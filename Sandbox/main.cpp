@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <iostream>
 #include <glad/glad.h>
+#include "game.h"
+#include "visual.h"
 
 #pragma comment(lib, "opengl32.lib")
 
@@ -54,11 +56,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
         hInstance,
         NULL);
 
-    ShowWindow(hwnd, nCmdShow);
-
     EnableOpenGL(hwnd, &hDC, &hRC);
 
     Initialize();
+
+    ShowWindow(hwnd, nCmdShow);
+
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+    Rescale(rect.right, rect.bottom);
 
     while (!bQuit)
     {
@@ -78,6 +84,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
         {
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT);
+
+
 
             SwapBuffers(hDC);
             Sleep(1);
@@ -101,6 +109,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_DESTROY:
         return 0;
+
+    case WM_SIZE:
+        Rescale(LOWORD(lParam), HIWORD(lParam));
+        break;
 
     case WM_KEYDOWN:
     {
@@ -164,4 +176,5 @@ void Initialize()
     freopen_s(&fpstderr, "CONOUT$", "w", stderr);
 
     gladLoadGL();
+    InitializeGame();
 }
