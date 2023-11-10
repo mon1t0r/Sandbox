@@ -24,7 +24,7 @@ HWND hwnd;
 
 bool mouse_down;
 int mouse_prev_x = -1, mouse_prev_y = -1;
-Material::Type current_material = Material::SAND;
+Material::Type current_material = Material::STONE;
 
 void InitGame(HWND handle)
 {
@@ -99,6 +99,14 @@ void HandleMouseDown(uint32_t x, uint32_t y)
     auto mouse_pos = GetMousePos(x, y);
     mouse_prev_x = std::get<0>(mouse_pos);
     mouse_prev_y = std::get<1>(mouse_pos);
+}
+
+void SwitchMaterial()
+{
+    int ind = current_material + 1;
+    if (ind >= Material::MATERIALS_COUNT)
+        ind = 0;
+    current_material = (Material::Type) ind;
 }
 
 void DrawDot(int x, int y, Material::Type type)

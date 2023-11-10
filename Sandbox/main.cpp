@@ -123,7 +123,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         switch (wParam)
         {
-
+        case VK_F1:
+        {
+            SwitchMaterial();
+            break;
+        }
         }
     }
     break;

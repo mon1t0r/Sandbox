@@ -13,3 +13,4 @@ void FreeGame();
 void UpdateGame();
 
 void HandleMouseDown(uint32_t, uint32_t);
+void SwitchMaterial();
