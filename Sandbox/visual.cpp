@@ -15,8 +15,8 @@ using std::chrono::duration;
 using std::chrono::milliseconds;
 
 void DrawScreenTexture();
-void RegenScreenTexture();
-void RegenScreenRect();
+void UpdateScreenTexture();
+void UpdateScreenRect();
 
 const uint8_t data_filled[] = { 255, 255, 255 };
 const uint8_t data_empty[] = { 127, 127, 127 };
@@ -38,6 +38,8 @@ uint8_t* screen_texture_data;
 uint32_t shader_default;
 uint32_t rectVAO, rectVBO;
 
+bool matrix_updated;
+
 void InitVisual()
 {
     gladLoadGL();
@@ -50,7 +52,7 @@ void InitVisual()
 
     screen_texture_data = new uint8_t[FIELD_WIDTH * FIELD_HEIGHT * 3];
 
-    RegenScreenTexture();
+    UpdateScreenTexture();
 }
 
 void FreeVisual()
@@ -62,10 +64,15 @@ void DrawMain()
 {
     auto t1 = high_resolution_clock::now();
 
+    if (matrix_updated)
+    {
+        UpdateScreenTexture();
+        matrix_updated = false;
+    }
+
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    RegenScreenTexture();
     DrawScreenTexture();
 
     glColor3f(0.5f, 1.0f, 0.5f);
@@ -96,7 +103,7 @@ void DrawScreenTexture()
     glUseProgram(0);
 }
 
-void RegenScreenTexture()
+void UpdateScreenTexture()
 {
     if (screen_texture != NULL)
     {
@@ -129,7 +136,7 @@ void RegenScreenTexture()
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void RegenScreenRect()
+void UpdateScreenRect()
 {
     glGenVertexArrays(1, &rectVAO);
     glGenBuffers(1, &rectVBO);
@@ -141,6 +148,11 @@ void RegenScreenRect()
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+}
+
+void SetMatrixUpdated()
+{
+    matrix_updated = true;
 }
 
 void Rescale(int width, int height)
@@ -159,5 +171,5 @@ void Rescale(int width, int height)
     }
     glViewport((width - frame_width) / 2, (height - frame_height) / 2, frame_width, frame_height);
 
-    RegenScreenRect();
+    UpdateScreenRect();
 }

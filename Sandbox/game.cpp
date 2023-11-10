@@ -11,4 +11,5 @@ void InitGame()
 	for (int i = 0; i < FIELD_WIDTH; ++i)
 		for (int j = 0; j < FIELD_HEIGHT; ++j)
 			matrix[i][j] = rand() % 2;
+	SetMatrixUpdated();
 }
