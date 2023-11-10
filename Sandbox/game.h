@@ -1,12 +1,11 @@
 #pragma once
 
-#include "material.h"
+#include "cell.h"
 
-#define FIELD_WIDTH 800
-#define FIELD_HEIGHT 400
+#define FIELD_WIDTH 80
+#define FIELD_HEIGHT 40
 
-extern uint8_t matrix[FIELD_WIDTH][FIELD_HEIGHT];
-extern Material materials[Material::MATERIALS_COUNT];
+extern Cell matrix[FIELD_WIDTH][FIELD_HEIGHT];
 
 void InitGame();
 void FreeGame();

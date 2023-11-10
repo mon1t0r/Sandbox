@@ -5,6 +5,7 @@
 #include <cmath>
 #include "visual.h"
 #include "game.h"
+#include "material.h"
 #include "shaders.h"
 
 #pragma comment(lib, "opengl32.lib")
@@ -112,13 +113,11 @@ void UpdateScreenTexture()
     }
 
     int color;
-    Material* material;
     for (int i = 0; i < FIELD_WIDTH; ++i)
     {
         for (int j = 0; j < FIELD_HEIGHT; ++j)
         {
-            material = materials + matrix[i][j];
-            color = material->GetColor();
+            color = matrix[i][j].GetColor();
             screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 0] = (color & 0xFF0000) >> 16;
             screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 1] = (color & 0x00FF00) >> 8;
             screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 2] = (color & 0x0000FF);

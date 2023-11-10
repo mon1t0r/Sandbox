@@ -2,12 +2,15 @@
 
 class Material
 {
-	int color = 0x000000;
+	int color;
+	bool is_color_constant;
 	
 public:
 	Material();
 	Material(int color);
-	int GetColor();
+	Material(int color, bool is_color_constant);
+	int GetBaseColor();
+	int GetRandomColor();
 
 	// Used for array indexes
 	enum Type
@@ -16,4 +19,10 @@ public:
 		STONE,
 		MATERIALS_COUNT
 	};
+
+	static void InitMaterials();
+	static Material* FromType(Type type);
+
+private:
+	static Material materials[MATERIALS_COUNT];
 };

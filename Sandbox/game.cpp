@@ -3,19 +3,17 @@
 #include <ctime>
 #include "game.h"
 #include "visual.h"
+#include "material.h"
 
-uint8_t matrix[FIELD_WIDTH][FIELD_HEIGHT];
-Material materials[Material::MATERIALS_COUNT];
+Cell matrix[FIELD_WIDTH][FIELD_HEIGHT];
 
 void InitGame()
 {
-	materials[Material::AIR] = Material(0x000000);
-	materials[Material::STONE] = Material(0x808080);
-
+	Material::InitMaterials();
 	srand(time(NULL));
 	for (int i = 0; i < FIELD_WIDTH; ++i)
 		for (int j = 0; j < FIELD_HEIGHT; ++j)
-			matrix[i][j] = rand() % Material::MATERIALS_COUNT;
+			matrix[i][j] = (rand() % 2) ? Cell(Material::AIR) : Cell(Material::STONE);
 	SetMatrixUpdated();
 }
 
