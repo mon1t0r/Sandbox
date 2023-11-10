@@ -9,6 +9,7 @@ class Cell
 public:
 	Cell();
 	Cell(Material::Type type);
+	void UpdateMaterial(Material::Type type);
 	int GetColor();
 };
 

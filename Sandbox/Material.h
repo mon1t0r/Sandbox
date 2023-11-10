@@ -25,4 +25,5 @@ public:
 
 private:
 	static Material materials[MATERIALS_COUNT];
+	static bool materials_initialized;
 };

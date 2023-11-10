@@ -114,13 +114,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         Rescale(LOWORD(lParam), HIWORD(lParam));
         break;
 
+    case WM_LBUTTONDOWN:
+        HandleMouseDown(LOWORD(lParam), HIWORD(lParam));
+        break;
+
+    case WM_LBUTTONUP:
+        HandleMouseUp(LOWORD(lParam), HIWORD(lParam));
+        break;
+
+    case WM_MOUSEMOVE:
+        HandleMouseMove(LOWORD(lParam), HIWORD(lParam));
+        break;
+
     case WM_KEYDOWN:
     {
         switch (wParam)
         {
-        case VK_ESCAPE:
-            PostQuitMessage(0);
-            break;
+
         }
     }
     break;

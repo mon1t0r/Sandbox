@@ -88,7 +88,7 @@ void DrawMain()
 
     duration<double, std::milli> ms_double = t2 - t1;
 
-    std::cout << "Rendering took " << ms_double.count() << "ms\n";
+    //std::cout << "Rendering took " << ms_double.count() << "ms\n";
 }
 
 void DrawScreenTexture()
@@ -118,9 +118,9 @@ void UpdateScreenTexture()
         for (int j = 0; j < FIELD_HEIGHT; ++j)
         {
             color = matrix[i][j].GetColor();
-            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 0] = (color & 0xFF0000) >> 16;
-            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 1] = (color & 0x00FF00) >> 8;
-            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 2] = (color & 0x0000FF);
+            screen_texture_data[3 * (j * FIELD_WIDTH + i) + 0] = (color & 0xFF0000) >> 16;
+            screen_texture_data[3 * (j * FIELD_WIDTH + i) + 1] = (color & 0x00FF00) >> 8;
+            screen_texture_data[3 * (j * FIELD_WIDTH + i) + 2] = (color & 0x0000FF);
         }
     }
 

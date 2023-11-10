@@ -5,6 +5,7 @@
 #define COLOR_RANDOM_OFFSET 20
 
 Material Material::materials[MATERIALS_COUNT];
+bool Material::materials_initialized;
 
 Material::Material() : Material(0x000000)
 {
@@ -47,14 +48,22 @@ int Material::GetRandomColor()
 
 void Material::InitMaterials()
 {
+	if (materials_initialized)
+		return;
+	materials_initialized = true;
+
 	materials[Material::AIR] = Material(0x000000, true);
 	materials[Material::STONE] = Material(0x808080);
 }
 
 Material* Material::FromType(Material::Type type)
 {
+	if (!materials_initialized)
+		return nullptr;
+
 	if (type >= Material::MATERIALS_COUNT) {
 		return Material::materials + Material::AIR;
 	}
+
 	return Material::materials + type;
 }
