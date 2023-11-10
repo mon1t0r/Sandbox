@@ -129,18 +129,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Cell.cpp" />
+    <ClCompile Include="cell.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="material.cpp" />
     <ClCompile Include="shaders.cpp" />
     <ClCompile Include="visual.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Cell.h" />
+    <ClInclude Include="cell.h" />
     <ClInclude Include="game.h" />
-    <ClInclude Include="Material.h" />
+    <ClInclude Include="material.h" />
     <ClInclude Include="shaders.h" />
     <ClInclude Include="visual.h" />
   </ItemGroup>

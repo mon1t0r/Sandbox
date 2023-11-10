@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <iostream>
-#include <chrono>
 #include <ctime>
 #include <glad/glad.h>
 #include <algorithm>
@@ -11,11 +10,6 @@
 #include "material.h"
 
 #define DRAW_RADIUS 20
-
-using std::chrono::high_resolution_clock;
-using std::chrono::duration_cast;
-using std::chrono::duration;
-using std::chrono::milliseconds;
 
 Cell matrix[FIELD_WIDTH][FIELD_HEIGHT];
 
