@@ -90,6 +90,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
     }
 
     FreeVisual();
+    FreeGame();
 
     DisableOpenGL(hwnd, hDC, hRC);
 

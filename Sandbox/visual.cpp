@@ -111,15 +111,17 @@ void UpdateScreenTexture()
         glDeleteTextures(1, &screen_texture);
     }
 
-    const uint8_t* data;
+    int color;
+    Material* material;
     for (int i = 0; i < FIELD_WIDTH; ++i)
     {
         for (int j = 0; j < FIELD_HEIGHT; ++j)
         {
-            data = matrix[i][j] ? data_filled : data_empty;
-            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 0] = data[0];
-            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 1] = data[1];
-            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 2] = data[2];
+            material = materials + matrix[i][j];
+            color = material->GetColor();
+            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 0] = (color & 0xFF0000) >> 16;
+            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 1] = (color & 0x00FF00) >> 8;
+            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 2] = (color & 0x0000FF);
         }
     }
 

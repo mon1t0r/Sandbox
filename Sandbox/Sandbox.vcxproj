@@ -131,11 +131,13 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="shaders.cpp" />
     <ClCompile Include="visual.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="shaders.h" />
     <ClInclude Include="visual.h" />
   </ItemGroup>
