@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdint.h>
 #include <chrono>
 #include <glad/glad.h>
 #include <cmath>
@@ -8,12 +9,17 @@
 
 #pragma comment(lib, "opengl32.lib")
 
+using std::chrono::high_resolution_clock;
+using std::chrono::duration_cast;
+using std::chrono::duration;
+using std::chrono::milliseconds;
+
 void DrawScreenTexture();
 void RegenScreenTexture();
 void RegenScreenRect();
 
-const GLubyte data_filled[] = { 255, 255, 255 };
-const GLubyte data_empty[] = { 127, 127, 127 };
+const uint8_t data_filled[] = { 255, 255, 255 };
+const uint8_t data_empty[] = { 127, 127, 127 };
 const float rectangle_vertices[] =
 {
     // Coords     // texCoords
@@ -26,9 +32,11 @@ const float rectangle_vertices[] =
     -1.0f,  1.0f,  0.0f, 1.0f
 };
 
-GLuint shader_default;
-GLuint screen_texture;
-GLuint rectVAO, rectVBO;
+uint32_t screen_texture;
+uint8_t* screen_texture_data;
+
+uint32_t shader_default;
+uint32_t rectVAO, rectVBO;
 
 void InitVisual()
 {
@@ -38,22 +46,26 @@ void InitVisual()
     glUniform1i(glGetUniformLocation(shader_default, "screenTexture"), 0);
 
     glEnable(GL_TEXTURE_2D);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    screen_texture_data = new uint8_t[FIELD_WIDTH * FIELD_HEIGHT * 3];
 
     RegenScreenTexture();
 }
 
+void FreeVisual()
+{
+    delete[] screen_texture_data;
+}
+
 void DrawMain()
 {
-    using std::chrono::high_resolution_clock;
-    using std::chrono::duration_cast;
-    using std::chrono::duration;
-    using std::chrono::milliseconds;
-
     auto t1 = high_resolution_clock::now();
 
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+    RegenScreenTexture();
     DrawScreenTexture();
 
     glColor3f(0.5f, 1.0f, 0.5f);
@@ -92,11 +104,22 @@ void RegenScreenTexture()
         glDeleteTextures(1, &screen_texture);
     }
 
-    glGenTextures(1, &screen_texture);
+    const uint8_t* data;
+    for (int i = 0; i < FIELD_WIDTH; ++i)
+    {
+        for (int j = 0; j < FIELD_HEIGHT; ++j)
+        {
+            data = matrix[i][j] ? data_filled : data_empty;
+            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 0] = data[0];
+            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 1] = data[1];
+            screen_texture_data[3 * (i * FIELD_HEIGHT + j) + 2] = data[2];
+        }
+    }
 
+    glGenTextures(1, &screen_texture);
     glBindTexture(GL_TEXTURE_2D, screen_texture);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, FIELD_WIDTH, FIELD_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, FIELD_WIDTH, FIELD_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, screen_texture_data);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -118,16 +141,6 @@ void RegenScreenRect()
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-}
-
-void SetScreenTexturePixel(int x, int y, bool flag)
-{
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glBindTexture(GL_TEXTURE_2D, screen_texture);
-
-    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, flag ? data_filled : data_empty);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Rescale(int width, int height)

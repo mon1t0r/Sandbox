@@ -89,6 +89,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
         }
     }
 
+    FreeVisual();
+
     DisableOpenGL(hwnd, hDC, hRC);
 
     DestroyWindow(hwnd);

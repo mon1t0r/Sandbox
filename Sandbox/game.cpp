@@ -10,5 +10,5 @@ void InitGame()
 	srand(time(NULL));
 	for (int i = 0; i < FIELD_WIDTH; ++i)
 		for (int j = 0; j < FIELD_HEIGHT; ++j)
-			SetScreenTexturePixel(i, j, matrix[i][j] = rand() % 2);
+			matrix[i][j] = rand() % 2;
 }
