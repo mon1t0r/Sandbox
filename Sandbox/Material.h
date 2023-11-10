@@ -17,6 +17,8 @@ public:
 	{
 		AIR,
 		STONE,
+		SAND,
+		WATER,
 		MATERIALS_COUNT
 	};
 

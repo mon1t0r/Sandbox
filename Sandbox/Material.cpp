@@ -54,6 +54,8 @@ void Material::InitMaterials()
 
 	materials[Material::AIR] = Material(0x000000, true);
 	materials[Material::STONE] = Material(0x808080);
+	materials[Material::SAND] = Material(0xc2b280);
+	materials[Material::WATER] = Material(0x0f5e9c);
 }
 
 Material* Material::FromType(Material::Type type)

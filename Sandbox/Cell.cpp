@@ -13,11 +13,22 @@ Cell::Cell(Material::Type type)
 void Cell::UpdateMaterial(Material::Type type)
 {
 	auto new_material = Material::FromType(type);
-	if (!new_material || material == new_material)
+	if (!new_material || material == type)
 		return;
 	 
-	material = new_material;
-	color = material->GetRandomColor();
+	material = type;
+	color = new_material->GetRandomColor();
+}
+
+void Cell::CopyFrom(Cell* cell)
+{
+	material = cell->material;
+	color = cell->color;
+}
+
+Material::Type Cell::GetMaterial()
+{
+	return material;
 }
 
 int Cell::GetColor()

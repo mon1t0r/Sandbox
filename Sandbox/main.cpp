@@ -11,7 +11,7 @@ LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 void EnableOpenGL(HWND hwnd, HDC*, HGLRC*);
 void DisableOpenGL(HWND, HDC, HGLRC);
 
-void Initialize();
+void Initialize(HWND);
 
 int WINAPI WinMain(HINSTANCE hInstance,
     HINSTANCE hPrevInstance,
@@ -58,7 +58,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
     EnableOpenGL(hwnd, &hDC, &hRC);
 
-    Initialize();
+    Initialize(hwnd);
 
     ShowWindow(hwnd, nCmdShow);
 
@@ -82,6 +82,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
         }
         else
         {
+            UpdateGame();
             DrawMain();
 
             SwapBuffers(hDC);
@@ -116,14 +117,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_LBUTTONDOWN:
         HandleMouseDown(LOWORD(lParam), HIWORD(lParam));
-        break;
-
-    case WM_LBUTTONUP:
-        HandleMouseUp(LOWORD(lParam), HIWORD(lParam));
-        break;
-
-    case WM_MOUSEMOVE:
-        HandleMouseMove(LOWORD(lParam), HIWORD(lParam));
         break;
 
     case WM_KEYDOWN:
@@ -177,7 +170,7 @@ void DisableOpenGL(HWND hwnd, HDC hDC, HGLRC hRC)
     ReleaseDC(hwnd, hDC);
 }
 
-void Initialize()
+void Initialize(HWND hwnd)
 {
     AllocConsole();
     FILE* fpstdin = stdin, * fpstdout = stdout, * fpstderr = stderr;
@@ -186,5 +179,5 @@ void Initialize()
     freopen_s(&fpstderr, "CONOUT$", "w", stderr);
 
     InitVisual();
-    InitGame();
+    InitGame(hwnd);
 }

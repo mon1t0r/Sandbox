@@ -9,20 +9,26 @@
 #include "visual.h"
 #include "material.h"
 
-#define DRAW_RADIUS 20
+#define DRAW_RADIUS 5
 
-Cell matrix[FIELD_WIDTH][FIELD_HEIGHT];
-
-bool mouse_down;
-int mouse_prev_x = -1, mouse_prev_y = -1;
-
+void HandleMouse();
 void ConnectDots(int, int, int, int, Material::Type);
 void DrawDot(int, int, Material::Type);
 bool IsOutOfBounds(int, int);
+bool IsAir(int, int);
+void MoveCell(int, int, int, int);
 std::tuple<int, int> GetMousePos(uint32_t, uint32_t);
 
-void InitGame()
+Cell matrix[FIELD_WIDTH][FIELD_HEIGHT];
+HWND hwnd;
+
+bool mouse_down;
+int mouse_prev_x = -1, mouse_prev_y = -1;
+Material::Type current_material = Material::SAND;
+
+void InitGame(HWND handle)
 {
+    hwnd = handle;
 	Material::InitMaterials();
 	srand(time(NULL));
 	for (int i = 0; i < FIELD_WIDTH; ++i)
@@ -36,36 +42,63 @@ void FreeGame()
 	
 }
 
-void HandleMouseDown(uint32_t x, uint32_t y)
+void UpdateGame()
 {
-	mouse_down = true;
+    for (int i = 0; i < FIELD_WIDTH; ++i)
+        for (int j = 0; j < FIELD_HEIGHT; ++j)
+        {
+            if (matrix[i][j].GetMaterial() == Material::SAND)
+            {
+                if (IsAir(i, j - 1))
+                    MoveCell(i, j, i, j - 1);
+                else
+                {
+                    bool is_air_right = IsAir(i + 1, j - 1);
+                    bool is_air_left = IsAir(i - 1, j - 1);
 
-	auto mouse_pos = GetMousePos(x, y);
-    mouse_prev_x = std::get<0>(mouse_pos);
-    mouse_prev_y = std::get<1>(mouse_pos);
-    DrawDot(mouse_prev_x, mouse_prev_y, Material::STONE);
-    SetMatrixUpdated();
+                    if (is_air_right && is_air_left)
+                    {
+                        if (rand() % 2)
+                            MoveCell(i, j, i + 1, j - 1);
+                        else
+                            MoveCell(i, j, i - 1, j - 1);
+                    }
+                    else if (is_air_right)
+                        MoveCell(i, j, i + 1, j - 1);
+                    else if (is_air_left)
+                        MoveCell(i, j, i - 1, j - 1);
+                }
+            }
+        }
+
+    if ((GetKeyState(VK_LBUTTON) & 0x8000) != 0)
+        HandleMouse();
 }
 
-void HandleMouseUp(uint32_t x, uint32_t y)
+void HandleMouse()
 {
-	mouse_down = false;
-}
+    POINT p;
+    GetCursorPos(&p);
 
-void HandleMouseMove(uint32_t x, uint32_t y)
-{
-	if (!mouse_down)
-		return;
+    if (!ScreenToClient(hwnd, &p))
+        return;
 
-	auto mouse_pos = GetMousePos(x, y);
+	auto mouse_pos = GetMousePos(p.x, p.y);
 	int xi = std::get<0>(mouse_pos);
 	int yi = std::get<1>(mouse_pos);
 
-	ConnectDots(mouse_prev_x, mouse_prev_y, xi, yi, Material::STONE);
+	ConnectDots(mouse_prev_x, mouse_prev_y, xi, yi, current_material);
     SetMatrixUpdated();
 
 	mouse_prev_x = xi;
 	mouse_prev_y = yi;
+}
+
+void HandleMouseDown(uint32_t x, uint32_t y)
+{
+    auto mouse_pos = GetMousePos(x, y);
+    mouse_prev_x = std::get<0>(mouse_pos);
+    mouse_prev_y = std::get<1>(mouse_pos);
 }
 
 void DrawDot(int x, int y, Material::Type type)
@@ -75,7 +108,8 @@ void DrawDot(int x, int y, Material::Type type)
     int y_min = y - DRAW_RADIUS;
     int y_max = y + DRAW_RADIUS;
 
-    if (IsOutOfBounds(x_min, y_min) && IsOutOfBounds(x_max, y_max))
+    if (IsOutOfBounds(x_min, y_min) && IsOutOfBounds(x_max, y_max)
+        && IsOutOfBounds(x_max, y_min) && IsOutOfBounds(x_min, y_max))
         return;
 
     for (int i = x_min; i <= x_max; ++i)
@@ -87,6 +121,21 @@ void DrawDot(int x, int y, Material::Type type)
 bool IsOutOfBounds(int x, int y)
 {
     return x < 0 || y < 0 || x >= FIELD_WIDTH || y >= FIELD_HEIGHT;
+}
+
+bool IsAir(int x, int y)
+{
+    if (IsOutOfBounds(x, y))
+        return false;
+
+    return matrix[x][y].GetMaterial() == Material::AIR;
+}
+
+void MoveCell(int start_x, int start_y, int end_x, int end_y)
+{
+    matrix[end_x][end_y].CopyFrom(&matrix[start_x][start_y]);
+    matrix[start_x][start_y].UpdateMaterial(Material::AIR);
+    SetMatrixUpdated();
 }
 
 std::tuple<int, int> GetMousePos(uint32_t x, uint32_t y)
