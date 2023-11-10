@@ -17,6 +17,7 @@ bool mouse_down;
 int mouse_prev_x = -1, mouse_prev_y = -1;
 
 void ConnectDots(int, int, int, int, Material::Type);
+void DrawDot(int, int, Material::Type);
 bool IsOutOfBounds(int, int);
 std::tuple<int, int> GetMousePos(uint32_t, uint32_t);
 
@@ -42,6 +43,8 @@ void HandleMouseDown(uint32_t x, uint32_t y)
 	auto mouse_pos = GetMousePos(x, y);
     mouse_prev_x = std::get<0>(mouse_pos);
     mouse_prev_y = std::get<1>(mouse_pos);
+    DrawDot(mouse_prev_x, mouse_prev_y, Material::STONE);
+    SetMatrixUpdated();
 }
 
 void HandleMouseUp(uint32_t x, uint32_t y)
@@ -77,7 +80,7 @@ void DrawDot(int x, int y, Material::Type type)
 
     for (int i = x_min; i <= x_max; ++i)
         for (int j = y_min; j <= y_max; ++j)
-            if (!IsOutOfBounds(i, j))
+            if (!IsOutOfBounds(i, j) && (i - x) * (i - x) + (j - y) * (j - y) < DRAW_RADIUS * DRAW_RADIUS)
                 matrix[i][j].UpdateMaterial(type);
 }
 

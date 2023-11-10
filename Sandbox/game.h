@@ -2,7 +2,7 @@
 
 #include "cell.h"
 
-#define FIELD_WIDTH 800
+#define FIELD_WIDTH 1200
 #define FIELD_HEIGHT 600
 
 extern Cell matrix[FIELD_WIDTH][FIELD_HEIGHT];
