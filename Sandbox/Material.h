@@ -1,16 +1,22 @@
 #pragma once
 
+#include <memory>
+
 class Material
 {
 	int color;
-	bool is_color_constant;
 	
 public:
 	Material();
 	Material(int color);
-	Material(int color, bool is_color_constant);
+
 	int GetBaseColor();
 	int GetRandomColor();
+
+	virtual bool IsColorConstant();
+	virtual bool IsCrumblySpawn();
+
+	virtual void OnUpdate(int x, int y);
 
 	// Used for array indexes
 	enum Type
@@ -23,9 +29,9 @@ public:
 	};
 
 	static void InitMaterials();
-	static Material* FromType(Type type);
+	static std::shared_ptr<Material> FromType(Type type);
 
 private:
-	static Material materials[MATERIALS_COUNT];
+	static std::shared_ptr<Material> materials[MATERIALS_COUNT];
 	static bool materials_initialized;
 };

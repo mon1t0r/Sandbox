@@ -1,4 +1,4 @@
-#include "Cell.h"
+#include "cell.h"
 
 Cell::Cell() : Cell(Material::AIR)
 {
@@ -20,15 +20,15 @@ void Cell::UpdateMaterial(Material::Type type)
 	color = new_material->GetRandomColor();
 }
 
+Material::Type Cell::GetMaterial()
+{
+	return material;
+}
+
 void Cell::CopyFrom(Cell* cell)
 {
 	material = cell->material;
 	color = cell->color;
-}
-
-Material::Type Cell::GetMaterial()
-{
-	return material;
 }
 
 int Cell::GetColor()

@@ -1,5 +1,5 @@
 #pragma once
-#include "Material.h"
+#include "material.h"
 
 class Cell
 {
@@ -9,9 +9,12 @@ class Cell
 public:
 	Cell();
 	Cell(Material::Type type);
+
 	void UpdateMaterial(Material::Type type);
-	void CopyFrom(Cell* cell);
 	Material::Type GetMaterial();
+
+	void CopyFrom(Cell* cell);
+
 	int GetColor();
 };
 

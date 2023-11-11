@@ -1,5 +1,4 @@
-#include <stdlib.h>
-#include <stdint.h>
+#include <cstdlib>
 #include <iostream>
 #include <ctime>
 #include <glad/glad.h>
@@ -15,8 +14,6 @@ void HandleMouse();
 void ConnectDots(int, int, int, int, Material::Type);
 void DrawDot(int, int, Material::Type);
 bool IsOutOfBounds(int, int);
-bool IsAir(int, int);
-void MoveCell(int, int, int, int);
 std::tuple<int, int> GetMousePos(uint32_t, uint32_t);
 
 Cell matrix[FIELD_WIDTH][FIELD_HEIGHT];
@@ -44,35 +41,12 @@ void FreeGame()
 
 void UpdateGame()
 {
-    for (int i = 0; i < FIELD_WIDTH; ++i)
-        for (int j = 0; j < FIELD_HEIGHT; ++j)
-        {
-            if (matrix[i][j].GetMaterial() == Material::SAND)
-            {
-                if (IsAir(i, j - 1))
-                    MoveCell(i, j, i, j - 1);
-                else
-                {
-                    bool is_air_right = IsAir(i + 1, j - 1);
-                    bool is_air_left = IsAir(i - 1, j - 1);
-
-                    if (is_air_right && is_air_left)
-                    {
-                        if (rand() % 2)
-                            MoveCell(i, j, i + 1, j - 1);
-                        else
-                            MoveCell(i, j, i - 1, j - 1);
-                    }
-                    else if (is_air_right)
-                        MoveCell(i, j, i + 1, j - 1);
-                    else if (is_air_left)
-                        MoveCell(i, j, i - 1, j - 1);
-                }
-            }
-        }
-
     if ((GetKeyState(VK_LBUTTON) & 0x8000) != 0)
         HandleMouse();
+
+    for (int i = 0; i < FIELD_WIDTH; ++i)
+        for (int j = 0; j < FIELD_HEIGHT; ++j)
+            Material::FromType(matrix[i][j].GetMaterial())->OnUpdate(i, j);
 }
 
 void HandleMouse()
@@ -123,7 +97,8 @@ void DrawDot(int x, int y, Material::Type type)
     for (int i = x_min; i <= x_max; ++i)
         for (int j = y_min; j <= y_max; ++j)
             if (!IsOutOfBounds(i, j) && (i - x) * (i - x) + (j - y) * (j - y) < DRAW_RADIUS * DRAW_RADIUS)
-                matrix[i][j].UpdateMaterial(type);
+                if (!Material::FromType(type)->IsCrumblySpawn() || !(rand() % 20))
+                    matrix[i][j].UpdateMaterial(type);
 }
 
 bool IsOutOfBounds(int x, int y)

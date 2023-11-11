@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include <cstdint>
 #include "cell.h"
 
 #define FIELD_WIDTH 500
@@ -14,3 +15,6 @@ void UpdateGame();
 
 void HandleMouseDown(uint32_t, uint32_t);
 void SwitchMaterial();
+
+bool IsAir(int, int);
+void MoveCell(int, int, int, int);
