@@ -7,6 +7,8 @@ class Cell
 {
 	MaterialType material;
 	int color;
+	bool is_updated;
+	bool info;
 
 public:
 	Cell();
@@ -18,4 +20,8 @@ public:
 	void CopyFrom(Cell* cell);
 
 	int GetColor();
+	void SetUpdated(bool is_updated);
+	bool IsUpdated();
+	void SetInfo(bool info);
+	bool GetInfo();
 };

@@ -8,7 +8,7 @@
 #include "visual.h"
 #include "material.h"
 
-#define DRAW_RADIUS 3
+#define DRAW_RADIUS 1
 
 void HandleMouse();
 std::tuple<int, int> GetMousePos(uint32_t, uint32_t);
@@ -67,6 +67,8 @@ void HandleMouseDown(uint32_t x, uint32_t y)
     auto mouse_pos = GetMousePos(x, y);
     mouse_prev_x = std::get<0>(mouse_pos);
     mouse_prev_y = std::get<1>(mouse_pos);
+
+    game_field->SetPoint(mouse_prev_x, mouse_prev_y, current_material, DRAW_RADIUS);
 }
 
 void SwitchMaterial()

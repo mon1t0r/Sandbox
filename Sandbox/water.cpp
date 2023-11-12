@@ -1,5 +1,6 @@
 #include "water.h"
 #include "game.h"
+#include "cell.h"
 
 bool Water::IsCrumblySpawn()
 {
@@ -10,26 +11,36 @@ void Water::OnUpdate(Field* field, int x, int y)
 {
     if (field->IsMaterial(x, y - 1, MaterialType::AIR))
     {
-        field->MoveCell(x, y, x, y - 1);
+        field->MovePoint(x, y, x, y - 1);
         return;
     }
 
-    bool is_air_right = field->IsMaterial(x + 1, y - 1, MaterialType::AIR) && field->IsMaterial(x + 1, y, MaterialType::AIR);
-    bool is_air_left = field->IsMaterial(x - 1, y - 1, MaterialType::AIR) && field->IsMaterial(x - 1, y, MaterialType::AIR);;
+    if (field->IsMaterial(x, y + 1, MaterialType::SAND))
+    {
+        field->SwapPoints(x, y, x, y + 1);
+        return;
+    }
+
+    bool is_air_right = field->IsMaterial(x + 1, y, MaterialType::AIR);
+    bool is_air_left = field->IsMaterial(x - 1, y, MaterialType::AIR);
+
+    auto cell = field->GetCell(x, y);
 
     if (is_air_right && is_air_left)
     {
-        if (rand() % 2)
-            field->MoveCell(x, y, x + 1, y - 1);
+        if (cell->GetInfo())
+            field->MovePoint(x, y, x + 1, y);
         else
-            field->MoveCell(x, y, x - 1, y - 1);
+            field->MovePoint(x, y, x - 1, y);
     }
     else if (is_air_right)
     {
-        field->MoveCell(x, y, x + 1, y - 1);
+        cell->SetInfo(true);
+        field->MovePoint(x, y, x + 1, y);
     }
     else if (is_air_left)
     {
-        field->MoveCell(x, y, x - 1, y - 1);
+        cell->SetInfo(false);
+        field->MovePoint(x, y, x - 1, y);
     }
 }

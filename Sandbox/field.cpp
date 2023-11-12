@@ -25,9 +25,30 @@ Field::~Field()
 
 void Field::Update()
 {
+    Cell* cell;
 	for (int i = 0; i < width; ++i)
-		for (int j = 0; j < height; ++j)
-			Material::FromType(matrix[i][j].GetMaterial())->OnUpdate(this, i, j);
+        for (int j = 0; j < height; ++j)
+        {
+            cell = &matrix[i][j];
+            if (cell->IsUpdated())
+                continue;
+            cell->SetUpdated(true);
+            Material::FromType(cell->GetMaterial())->OnUpdate(this, i, j);
+        }
+
+    for (int i = 0; i < width; ++i)
+        for (int j = 0; j < height; ++j)
+            matrix[i][j].SetUpdated(false);
+}
+
+int Field::GetWidth()
+{
+    return width;
+}
+
+int Field::GetHeight()
+{
+    return height;
 }
 
 void Field::SetPoint(int x, int y, MaterialType type)
@@ -54,7 +75,7 @@ void Field::SetPoint(int x, int y, MaterialType type, int radius)
         for (int j = y_min; j <= y_max; ++j)
         {
             if (!IsOutOfBounds(i, j) && (i - x) * (i - x) + (j - y) * (j - y) < radius * radius &&
-                !(Material::FromType(type)->IsCrumblySpawn() && rand() % 20))
+                !(radius > 2 && Material::FromType(type)->IsCrumblySpawn() && rand() % 20))
             {
                 matrix[i][j].UpdateMaterial(type);
                 flag = true;
@@ -124,7 +145,7 @@ void Field::SetLine(int x1, int y1, int x2, int y2, MaterialType type, int line_
     }
 }
 
-void Field::MoveCell(int start_x, int start_y, int end_x, int end_y)
+void Field::MovePoint(int start_x, int start_y, int end_x, int end_y)
 {
     if (IsOutOfBounds(start_x, start_y) || IsOutOfBounds(end_x, end_y) ||
         IsMaterial(start_x, start_y, MaterialType::AIR) || !IsMaterial(end_x, end_y, MaterialType::AIR))
@@ -132,6 +153,18 @@ void Field::MoveCell(int start_x, int start_y, int end_x, int end_y)
 
     matrix[end_x][end_y].CopyFrom(&matrix[start_x][start_y]);
     matrix[start_x][start_y].UpdateMaterial(MaterialType::AIR);
+
+    SetMatrixUpdated();
+}
+
+void Field::SwapPoints(int x1, int y1, int x2, int y2)
+{
+    if (IsOutOfBounds(x1, y1) || IsOutOfBounds(x2, y2))
+        return;
+
+    Cell cell = matrix[x1][y1];
+    matrix[x1][y1].CopyFrom(&matrix[x2][y2]);
+    matrix[x2][y2].CopyFrom(&cell);
 
     SetMatrixUpdated();
 }
