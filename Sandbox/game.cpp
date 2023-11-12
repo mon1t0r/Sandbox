@@ -38,18 +38,24 @@ void FreeGame()
 
 void UpdateGame()
 {
-    if ((GetKeyState(VK_LBUTTON) & 0x8000) != 0)
-        HandleMouse();
-
     game_field->Update();
+
+    HandleMouse();
 }
 
 void HandleMouse()
 {
+    if ((GetKeyState(VK_LBUTTON) & 0x8000) == 0)
+        return;
+
     POINT p;
+    RECT rect;
     GetCursorPos(&p);
 
-    if (!ScreenToClient(hwnd, &p))
+    if (!ScreenToClient(hwnd, &p) || !GetClientRect(hwnd, &rect))
+        return;
+
+    if (rect.left > p.x || rect.right < p.x || rect.top > p.y || rect.bottom < p.y)
         return;
 
 	auto mouse_pos = GetMousePos(p.x, p.y);
