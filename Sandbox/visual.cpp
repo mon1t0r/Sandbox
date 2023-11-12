@@ -5,6 +5,8 @@
 #include <cmath>
 #include "visual.h"
 #include "game.h"
+#include "field.h"
+#include "cell.h"
 #include "material.h"
 #include "shaders.h"
 
@@ -117,7 +119,7 @@ void UpdateScreenTexture()
     {
         for (int j = 0; j < FIELD_HEIGHT; ++j)
         {
-            color = matrix[i][j].GetColor();
+            color = game_field->GetCell(i, j)->GetColor();
             screen_texture_data[3 * (j * FIELD_WIDTH + i) + 0] = (color & 0xFF0000) >> 16;
             screen_texture_data[3 * (j * FIELD_WIDTH + i) + 1] = (color & 0x00FF00) >> 8;
             screen_texture_data[3 * (j * FIELD_WIDTH + i) + 2] = (color & 0x0000FF);

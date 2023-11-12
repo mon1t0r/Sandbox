@@ -2,6 +2,18 @@
 
 #include <memory>
 
+// Used for array indexes
+enum MaterialType : unsigned int
+{
+	AIR,
+	STONE,
+	SAND,
+	WATER,
+	MATERIALS_COUNT
+};
+
+class Field;
+
 class Material
 {
 	int color;
@@ -16,22 +28,12 @@ public:
 	virtual bool IsColorConstant();
 	virtual bool IsCrumblySpawn();
 
-	virtual void OnUpdate(int x, int y);
-
-	// Used for array indexes
-	enum Type
-	{
-		AIR,
-		STONE,
-		SAND,
-		WATER,
-		MATERIALS_COUNT
-	};
+	virtual void OnUpdate(Field* field, int x, int y);
 
 	static void InitMaterials();
-	static std::shared_ptr<Material> FromType(Type type);
+	static std::shared_ptr<Material> FromType(MaterialType type);
 
 private:
-	static std::shared_ptr<Material> materials[MATERIALS_COUNT];
+	static std::shared_ptr<Material> materials[MaterialType::MATERIALS_COUNT];
 	static bool materials_initialized;
 };

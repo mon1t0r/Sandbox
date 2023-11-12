@@ -3,6 +3,7 @@
 #include "material.h"
 #include "air.h"
 #include "sand.h"
+#include "water.h"
 
 #define COLOR_RANDOM_OFFSET 20
 
@@ -52,7 +53,7 @@ bool Material::IsCrumblySpawn()
 	return false;
 }
 
-void Material::OnUpdate(int x, int y)
+void Material::OnUpdate(Field* field, int x, int y)
 {
 	
 }
@@ -63,19 +64,19 @@ void Material::InitMaterials()
 		return;
 	materials_initialized = true;
 
-	materials[Material::AIR] = std::make_shared<Air>(Air(0x000000));
-	materials[Material::STONE] = std::make_shared<Material>(Material(0x808080));
-	materials[Material::SAND] = std::make_shared<Sand>(Sand(0xc2b280));
-	materials[Material::WATER] = std::make_shared<Material>(Material(0x0f5e9c));
+	materials[MaterialType::AIR] = std::make_shared<Air>(Air(0x000000));
+	materials[MaterialType::STONE] = std::make_shared<Material>(Material(0x808080));
+	materials[MaterialType::SAND] = std::make_shared<Sand>(Sand(0xc2b280));
+	materials[MaterialType::WATER] = std::make_shared<Water>(Water(0x0f5e9c));
 }
 
-std::shared_ptr<Material> Material::FromType(Material::Type type)
+std::shared_ptr<Material> Material::FromType(MaterialType type)
 {
 	if (!materials_initialized)
 		return nullptr;
 
-	if (type >= Material::MATERIALS_COUNT) {
-		return Material::materials[Material::AIR];
+	if (type < 0 || type >= MaterialType::MATERIALS_COUNT) {
+		return Material::materials[MaterialType::AIR];
 	}
 
 	return Material::materials[type];

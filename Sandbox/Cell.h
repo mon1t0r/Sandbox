@@ -1,20 +1,21 @@
 #pragma once
-#include "material.h"
+
+class Material;
+enum MaterialType : unsigned int;
 
 class Cell
 {
-	Material::Type material;
+	MaterialType material;
 	int color;
 
 public:
 	Cell();
-	Cell(Material::Type type);
+	Cell(MaterialType type);
 
-	void UpdateMaterial(Material::Type type);
-	Material::Type GetMaterial();
+	void UpdateMaterial(MaterialType type);
+	MaterialType GetMaterial();
 
 	void CopyFrom(Cell* cell);
 
 	int GetColor();
 };
-

@@ -182,6 +182,6 @@ void Initialize(HWND hwnd)
     freopen_s(&fpstdout, "CONOUT$", "w", stdout);
     freopen_s(&fpstderr, "CONOUT$", "w", stderr);
 
-    InitVisual();
     InitGame(hwnd);
+    InitVisual();
 }

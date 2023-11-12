@@ -19,24 +19,24 @@
     <Filter Include="Header Files\Materials">
       <UniqueIdentifier>{3989086b-6707-431a-9633-ad885a6704eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Logic">
+      <UniqueIdentifier>{b3c9cf19-54cf-4632-bc8b-fd30bde3614f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Logic">
+      <UniqueIdentifier>{1904f12f-bc7f-4960-814a-dcd643cd3cb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visual">
+      <UniqueIdentifier>{38dcde0a-d643-4a90-a80b-5053e3fcbed7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visual">
+      <UniqueIdentifier>{de373a00-3dd0-494c-9de1-8dce396759e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="glad\src\glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="visual.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="shaders.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="material.cpp">
@@ -48,20 +48,26 @@
     <ClCompile Include="air.cpp">
       <Filter>Source Files\Materials</Filter>
     </ClCompile>
+    <ClCompile Include="water.cpp">
+      <Filter>Source Files\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="visual.cpp">
+      <Filter>Source Files\Visual</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>Source Files\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="cell.cpp">
+      <Filter>Source Files\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="shaders.cpp">
+      <Filter>Source Files\Visual</Filter>
+    </ClCompile>
+    <ClCompile Include="field.cpp">
+      <Filter>Source Files\Logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="visual.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="shaders.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="material.h">
       <Filter>Header Files\Materials</Filter>
     </ClInclude>
@@ -70,6 +76,24 @@
     </ClInclude>
     <ClInclude Include="air.h">
       <Filter>Header Files\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="water.h">
+      <Filter>Header Files\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="visual.h">
+      <Filter>Header Files\Visual</Filter>
+    </ClInclude>
+    <ClInclude Include="cell.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders.h">
+      <Filter>Header Files\Visual</Filter>
+    </ClInclude>
+    <ClInclude Include="field.h">
+      <Filter>Header Files\Logic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,12 +1,12 @@
-#include "sand.h"
+#include "water.h"
 #include "game.h"
 
-bool Sand::IsCrumblySpawn()
+bool Water::IsCrumblySpawn()
 {
     return true;
 }
 
-void Sand::OnUpdate(Field* field, int x, int y)
+void Water::OnUpdate(Field* field, int x, int y)
 {
     if (field->IsMaterial(x, y - 1, MaterialType::AIR))
     {

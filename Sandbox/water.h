@@ -1,7 +1,7 @@
 #pragma once
 #include "material.h"
 
-class Sand : public Material
+class Water : public Material
 {
 	using Material::Material;
 

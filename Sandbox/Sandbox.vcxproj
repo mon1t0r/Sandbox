@@ -131,6 +131,7 @@
   <ItemGroup>
     <ClCompile Include="air.cpp" />
     <ClCompile Include="cell.cpp" />
+    <ClCompile Include="field.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
@@ -138,15 +139,18 @@
     <ClCompile Include="shaders.cpp" />
     <ClCompile Include="sand.cpp" />
     <ClCompile Include="visual.cpp" />
+    <ClCompile Include="water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="air.h" />
     <ClInclude Include="cell.h" />
+    <ClInclude Include="field.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="shaders.h" />
     <ClInclude Include="sand.h" />
     <ClInclude Include="visual.h" />
+    <ClInclude Include="water.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
