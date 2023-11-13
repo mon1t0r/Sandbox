@@ -86,7 +86,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
             DrawMain();
 
             SwapBuffers(hDC);
-            Sleep(5);
+            Sleep(20);
         }
     }
 

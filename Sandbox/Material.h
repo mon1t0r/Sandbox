@@ -28,7 +28,9 @@ public:
 	virtual bool IsColorConstant();
 	virtual bool IsCrumblySpawn();
 
-	virtual void OnUpdate(Field* field, int x, int y);
+	virtual void OnCellUpdate(Field* field, int x, int y);
+	virtual void OnFieldUpdatePre(Field* field);
+	virtual void OnFieldUpdatePost(Field* field);
 
 	static void InitMaterials();
 	static std::shared_ptr<Material> FromType(MaterialType type);

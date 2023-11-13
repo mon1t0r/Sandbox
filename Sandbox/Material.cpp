@@ -53,9 +53,19 @@ bool Material::IsCrumblySpawn()
 	return false;
 }
 
-void Material::OnUpdate(Field* field, int x, int y)
+void Material::OnCellUpdate(Field* field, int x, int y)
 {
 	
+}
+
+void Material::OnFieldUpdatePre(Field* field)
+{
+
+}
+
+void Material::OnFieldUpdatePost(Field* field)
+{
+
 }
 
 void Material::InitMaterials()
@@ -67,7 +77,7 @@ void Material::InitMaterials()
 	materials[MaterialType::AIR] = std::make_shared<Air>(Air(0x000000));
 	materials[MaterialType::STONE] = std::make_shared<Material>(Material(0x808080));
 	materials[MaterialType::SAND] = std::make_shared<Sand>(Sand(0xc2b280));
-	materials[MaterialType::WATER] = std::make_shared<Water>(Water(0x0f5e9c));
+	materials[MaterialType::WATER] =  std::make_shared<Water>(Water(0x0f5e9c));
 }
 
 std::shared_ptr<Material> Material::FromType(MaterialType type)

@@ -25,6 +25,9 @@ Field::~Field()
 
 void Field::Update()
 {
+    for (int i = 0; i < MaterialType::MATERIALS_COUNT; ++i)
+        Material::FromType((MaterialType)i)->OnFieldUpdatePre(this);
+
     Cell* cell;
 	for (int i = 0; i < width; ++i)
         for (int j = 0; j < height; ++j)
@@ -33,12 +36,15 @@ void Field::Update()
             if (cell->IsUpdated())
                 continue;
             cell->SetUpdated(true);
-            Material::FromType(cell->GetMaterial())->OnUpdate(this, i, j);
+            Material::FromType(cell->GetMaterial())->OnCellUpdate(this, i, j);
         }
 
     for (int i = 0; i < width; ++i)
         for (int j = 0; j < height; ++j)
             matrix[i][j].SetUpdated(false);
+
+    for (int i = 0; i < MaterialType::MATERIALS_COUNT; ++i)
+        Material::FromType((MaterialType)i)->OnFieldUpdatePost(this);
 }
 
 int Field::GetWidth()

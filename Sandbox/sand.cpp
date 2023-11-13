@@ -14,7 +14,7 @@ bool CanMove(Field* field, int x, int y)
             field->IsMaterial(x, y, MaterialType::WATER));
 }
 
-void Sand::OnUpdate(Field* field, int x, int y)
+void Sand::OnCellUpdate(Field* field, int x, int y)
 {
     if (field->IsMaterial(x, y - 1, MaterialType::AIR))
     {

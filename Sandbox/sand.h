@@ -7,6 +7,6 @@ class Sand : public Material
 
 public:
 	bool IsCrumblySpawn() override;
-	void OnUpdate(Field* field, int x, int y) override;
+	void OnCellUpdate(Field* field, int x, int y) override;
 };
 
