@@ -1,6 +1,5 @@
 #include <iostream>
 #include <stdint.h>
-#include <chrono>
 #include <glad/glad.h>
 #include <cmath>
 #include "visual.h"
@@ -12,17 +11,10 @@
 
 #pragma comment(lib, "opengl32.lib")
 
-using std::chrono::high_resolution_clock;
-using std::chrono::duration_cast;
-using std::chrono::duration;
-using std::chrono::milliseconds;
-
-void DrawScreenTexture();
+void InitializeTextures();
 void UpdateScreenTexture();
 void UpdateScreenRect();
 
-const uint8_t data_filled[] = { 255, 255, 255 };
-const uint8_t data_empty[] = { 127, 127, 127 };
 const float rectangle_vertices[] =
 {
     // Coords     // texCoords
@@ -34,12 +26,22 @@ const float rectangle_vertices[] =
      1.0f, -1.0f,  1.0f, 0.0f,
     -1.0f,  1.0f,  0.0f, 1.0f
 };
+const float frame_vertices[] =
+{
+    -0.999f,  0.999f,   0.999f, 0.999f,
+    -0.999f, -0.999f,   0.999f, -0.999f,
+    -0.999f, -0.999f,  -0.999f, 0.999f,
+     0.999f, -0.999f,   0.999f, 0.999f
+};
 
 uint32_t screen_texture;
 uint8_t* screen_texture_data;
 
+uint32_t frame_texture;
+
 uint32_t shader_default;
 uint32_t rectVAO, rectVBO;
+uint32_t frameVAO, frameVBO;
 
 bool matrix_updated;
 
@@ -55,7 +57,7 @@ void InitVisual()
 
     screen_texture_data = new uint8_t[FIELD_WIDTH * FIELD_HEIGHT * 3];
 
-    UpdateScreenTexture();
+    InitializeTextures();
 }
 
 void FreeVisual()
@@ -65,8 +67,6 @@ void FreeVisual()
 
 void DrawMain()
 {
-    auto t1 = high_resolution_clock::now();
-
     if (matrix_updated)
     {
         UpdateScreenTexture();
@@ -75,35 +75,17 @@ void DrawMain()
 
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-    DrawScreenTexture();
-
-    glColor3f(0.5f, 1.0f, 0.5f);
-    glBegin(GL_LINES);
-        glVertex2f(-0.999f, 0.999f); glVertex2f(0.999f, 0.999f);
-        glVertex2f(-0.999f, -0.999f); glVertex2f(0.999f, -0.999f);
-        glVertex2f(-0.999f, -0.999f); glVertex2f(-0.999f, 0.999f);
-        glVertex2f(0.999f, -0.999f); glVertex2f(0.999f, 0.999f);
-    glEnd();
-
-    auto t2 = high_resolution_clock::now();
-
-    duration<double, std::milli> ms_double = t2 - t1;
-
-    //std::cout << "Rendering took " << ms_double.count() << "ms\n";
-}
-
-void DrawScreenTexture()
-{
-    glColor3f(1.0f, 1.0f, 1.0f);
     glUseProgram(shader_default);
+
+    //Draw screen
     glBindTexture(GL_TEXTURE_2D, screen_texture);
     glBindVertexArray(rectVAO);
-
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glUseProgram(0);
+    //Draw frame
+    glBindTexture(GL_TEXTURE_2D, frame_texture);
+    glBindVertexArray(frameVAO);
+    glDrawArrays(GL_LINES, 0, 8);
 }
 
 void UpdateScreenTexture()
@@ -133,10 +115,6 @@ void UpdateScreenTexture()
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void UpdateScreenRect()
@@ -151,6 +129,31 @@ void UpdateScreenRect()
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+
+    glGenVertexArrays(1, &frameVAO);
+    glGenBuffers(1, &frameVBO);
+    glBindVertexArray(frameVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, frameVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(frame_vertices), &frame_vertices, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+}
+
+void InitializeTextures()
+{
+    UpdateScreenTexture();
+
+    const uint8_t frame_texture_data[] { 50, 50, 50 };
+
+    glGenTextures(1, &frame_texture);
+    glBindTexture(GL_TEXTURE_2D, frame_texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, &frame_texture_data);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
 void SetMatrixUpdated()
