@@ -5,10 +5,10 @@ enum MaterialType : unsigned int;
 
 class Cell
 {
-	MaterialType material;
-	int color;
-	bool is_updated;
-	bool info;
+	MaterialType material = (MaterialType)0;
+	int color = 0;
+	bool is_updated = false;
+	bool info = false;
 
 public:
 	Cell();

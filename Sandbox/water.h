@@ -22,6 +22,8 @@ private:
 
 	void FindPath(Field* field, int x, int y);
 	void ResetBuffer();
+#else
+	void MoveCells(Field* field, int x, int y, bool right);
 #endif
 };
 

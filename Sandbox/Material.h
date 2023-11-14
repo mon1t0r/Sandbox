@@ -16,7 +16,7 @@ class Field;
 
 class Material
 {
-	int color;
+	int color = 0;
 	
 public:
 	Material();
