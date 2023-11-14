@@ -22,6 +22,13 @@ void Sand::OnCellUpdate(Field* field, int x, int y)
         return;
     }
 
+    if (field->IsMaterial(x, y - 1, MaterialType::WATER))
+    {
+        field->SwapPoints(x, y, x, y - 1);
+        Material::FromType(MaterialType::WATER)->OnCellUpdate(field, x, y);
+        return;
+    }
+
     bool is_air_right = CanMove(field, x + 1, y);
     bool is_air_left = CanMove(field, x - 1, y);
 

@@ -23,11 +23,11 @@ void Water::OnCellUpdate(Field* field, int x, int y)
         return;
     }
 
-    if (field->IsMaterial(x, y + 1, MaterialType::SAND))
+    /*if (field->IsMaterial(x, y + 1, MaterialType::SAND))
     {
         field->SwapPoints(x, y, x, y + 1);
         return;
-    }
+    }*/
 
 #ifdef COMPLEX_WATER
     if (field->IsMaterial(x, y - 1, MaterialType::WATER) && !field->IsMaterial(x, y + 1, MaterialType::WATER))
