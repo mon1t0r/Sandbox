@@ -8,24 +8,24 @@ bool Sand::IsCrumblySpawn()
 
 bool CanMove(Field* field, int x, int y)
 {
-    return (field->IsMaterial(x, y - 1, MaterialType::AIR) &&
-        field->IsMaterial(x, y, MaterialType::AIR)) ||
-        (field->IsMaterial(x, y - 1, MaterialType::WATER) &&
-            field->IsMaterial(x, y, MaterialType::WATER));
+    return (field->IsMaterial(x, y - 1, Materials::AIR) &&
+        field->IsMaterial(x, y, Materials::AIR)) ||
+        (field->IsMaterial(x, y - 1, Materials::WATER) &&
+            field->IsMaterial(x, y, Materials::WATER));
 }
 
 void Sand::OnCellUpdate(Field* field, int x, int y)
 {
-    if (field->IsMaterial(x, y - 1, MaterialType::AIR))
+    if (field->IsMaterial(x, y - 1, Materials::AIR))
     {
         field->MovePoint(x, y, x, y - 1);
         return;
     }
 
-    if (field->IsMaterial(x, y - 1, MaterialType::WATER))
+    if (field->IsMaterial(x, y - 1, Materials::WATER))
     {
         field->SwapPoints(x, y, x, y - 1);
-        Material::FromType(MaterialType::WATER)->OnCellUpdate(field, x, y);
+        Material::FromType(Materials::WATER)->OnCellUpdate(field, x, y);
         return;
     }
 

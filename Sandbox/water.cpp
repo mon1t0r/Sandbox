@@ -17,9 +17,11 @@ bool Water::IsCrumblySpawn()
 
 void Water::OnCellUpdate(Field* field, int x, int y)
 {
-    if (field->IsMaterial(x, y - 1, MaterialType::AIR))
+    if (field->IsMaterial(x, y - 1, Materials::AIR))
     {
         field->MovePoint(x, y, x, y - 1);
+        if (!field->IsMaterial(x, y - 2, Materials::AIR))
+            field->GetCell(x, y - 1)->SetInfo(rand() % 2);
         return;
     }
 
@@ -96,8 +98,8 @@ void Water::ResetBuffer()
 #else
 void Water::MoveCells(Field* field, int x, int y, bool right)
 {
-    bool is_air_right = field->IsMaterial(x + 1, y, MaterialType::AIR);
-    bool is_air_left = field->IsMaterial(x - 1, y, MaterialType::AIR);
+    bool is_air_right = field->IsMaterial(x + 1, y, Materials::AIR);
+    bool is_air_left = field->IsMaterial(x - 1, y, Materials::AIR);
 
     if (right && !is_air_right)
     {
@@ -115,18 +117,18 @@ void Water::MoveCells(Field* field, int x, int y, bool right)
 
     if (right)
     {
-        is_air_right = field->IsMaterial(x + 2, y, MaterialType::AIR);
+        is_air_right = field->IsMaterial(x + 2, y, Materials::AIR);
 
         field->GetCell(x, y)->SetInfo(is_air_right);
         field->MovePoint(x, y, x + 1, y);
 
         bool flag = true;
         int x_ind = x;
-        while (x_ind > 0 && field->IsMaterial(x_ind - 1, y, MaterialType::WATER))
+        while (x_ind > 0 && field->IsMaterial(x_ind - 1, y, Materials::WATER))
         {
             field->GetCell(x_ind - 1, y)->SetInfo(is_air_right);
             field->MovePoint(x_ind - 1, y, x_ind, y);
-            if (field->IsMaterial(x + x - x_ind + 1, y - 1, MaterialType::AIR))
+            if (field->IsMaterial(x + x - x_ind + 1, y - 1, Materials::AIR))
                 field->MovePoint(x_ind, y, x + x - x_ind + 1, y - 1);
             x_ind--;
         }
@@ -135,18 +137,18 @@ void Water::MoveCells(Field* field, int x, int y, bool right)
     }
     else
     {
-        is_air_left = field->IsMaterial(x - 2, y, MaterialType::AIR);
+        is_air_left = field->IsMaterial(x - 2, y, Materials::AIR);
 
         field->GetCell(x, y)->SetInfo(!is_air_left);
         field->MovePoint(x, y, x - 1, y);
 
         int width = field->GetWidth();
         int x_ind = x;
-        while (x_ind < width && field->IsMaterial(x_ind + 1, y, MaterialType::WATER))
+        while (x_ind < width && field->IsMaterial(x_ind + 1, y, Materials::WATER))
         {
             field->GetCell(x_ind + 1, y)->SetInfo(!is_air_left);
             field->MovePoint(x_ind + 1, y, x_ind, y);
-            if (field->IsMaterial(x + x - x_ind - 1, y - 1, MaterialType::AIR))
+            if (field->IsMaterial(x + x - x_ind - 1, y - 1, Materials::AIR))
                 field->MovePoint(x_ind, y, x + x - x_ind - 1, y - 1);
             x_ind++;
         }

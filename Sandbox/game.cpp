@@ -8,7 +8,7 @@
 #include "visual.h"
 #include "material.h"
 
-#define DRAW_RADIUS 1
+#define DRAW_RADIUS 3
 
 void HandleMouse();
 std::tuple<int, int> GetMousePos(uint32_t, uint32_t);
@@ -19,7 +19,7 @@ HWND hwnd;
 
 bool mouse_down;
 int mouse_prev_x = -1, mouse_prev_y = -1;
-MaterialType current_material = MaterialType::STONE;
+Materials current_material = Materials::STONE;
 
 void InitGame(HWND handle)
 {
@@ -80,9 +80,9 @@ void HandleMouseDown(uint32_t x, uint32_t y)
 void SwitchMaterial()
 {
     int ind = current_material + 1;
-    if (ind >= MaterialType::MATERIALS_COUNT)
+    if (ind >= Materials::MATERIALS_COUNT)
         ind = 0;
-    current_material = (MaterialType) ind;
+    current_material = (Materials) ind;
 }
 
 std::tuple<int, int> GetMousePos(uint32_t x, uint32_t y)

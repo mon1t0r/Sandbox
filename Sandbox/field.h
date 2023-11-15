@@ -1,6 +1,7 @@
 #pragma once
 
 class Cell;
+enum Materials : unsigned int;
 enum MaterialType : unsigned int;
 
 class Field
@@ -18,9 +19,9 @@ public:
 	int GetWidth();
 	int GetHeight();
 
-	void SetPoint(int x, int y, MaterialType type);
-	void SetPoint(int x, int y, MaterialType type, int radius);
-	void SetLine(int x1, int y1, int x2, int y2, MaterialType type, int line_width);
+	void SetPoint(int x, int y, Materials type);
+	void SetPoint(int x, int y, Materials type, int radius);
+	void SetLine(int x1, int y1, int x2, int y2, Materials type, int line_width);
 
 	void MovePoint(int start_x, int start_y, int end_x, int end_y);
 	void SwapPoints(int x1, int y1, int x2, int y2);
@@ -28,7 +29,8 @@ public:
 	Cell* GetCell(int x, int y);
 
 	bool IsOutOfBounds(int x, int y);
-	bool IsMaterial(int x, int y, MaterialType type);
+	bool IsMaterial(int x, int y, Materials type);
+	bool IsMaterialType(int x, int y, MaterialType type);
 
 private:
 	inline void SetMatrixUpdated();

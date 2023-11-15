@@ -31,6 +31,12 @@
     <Filter Include="Source Files\Visual">
       <UniqueIdentifier>{de373a00-3dd0-494c-9de1-8dce396759e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Materials\Types">
+      <UniqueIdentifier>{bd5a2a7b-2f5d-4197-8d67-77f36f5a35d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Materials\Types">
+      <UniqueIdentifier>{477871ad-2100-429e-9b63-5c2bb4481f4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -42,13 +48,7 @@
     <ClCompile Include="material.cpp">
       <Filter>Source Files\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="sand.cpp">
-      <Filter>Source Files\Materials</Filter>
-    </ClCompile>
     <ClCompile Include="air.cpp">
-      <Filter>Source Files\Materials</Filter>
-    </ClCompile>
-    <ClCompile Include="water.cpp">
       <Filter>Source Files\Materials</Filter>
     </ClCompile>
     <ClCompile Include="visual.cpp">
@@ -66,18 +66,24 @@
     <ClCompile Include="field.cpp">
       <Filter>Source Files\Logic</Filter>
     </ClCompile>
+    <ClCompile Include="solid_static.cpp">
+      <Filter>Source Files\Materials\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="liquid.cpp">
+      <Filter>Source Files\Materials\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="gas.cpp">
+      <Filter>Source Files\Materials\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="solid_dynamic.cpp">
+      <Filter>Source Files\Materials\Types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="material.h">
       <Filter>Header Files\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="sand.h">
-      <Filter>Header Files\Materials</Filter>
-    </ClInclude>
     <ClInclude Include="air.h">
-      <Filter>Header Files\Materials</Filter>
-    </ClInclude>
-    <ClInclude Include="water.h">
       <Filter>Header Files\Materials</Filter>
     </ClInclude>
     <ClInclude Include="visual.h">
@@ -94,6 +100,18 @@
     </ClInclude>
     <ClInclude Include="field.h">
       <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="solid_static.h">
+      <Filter>Header Files\Materials\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="liquid.h">
+      <Filter>Header Files\Materials\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="gas.h">
+      <Filter>Header Files\Materials\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="solid_dynamic.h">
+      <Filter>Header Files\Materials\Types</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,17 +1,17 @@
 #include "cell.h"
 #include "material.h"
 
-Cell::Cell() : Cell(MaterialType::AIR)
+Cell::Cell() : Cell(Materials::AIR)
 {
 	
 }
 
-Cell::Cell(MaterialType type)
+Cell::Cell(Materials type)
 {
 	UpdateMaterial(type);
 }
 
-void Cell::UpdateMaterial(MaterialType type)
+void Cell::UpdateMaterial(Materials type)
 {
 	auto new_material = Material::FromType(type);
 	if (!new_material || material == type)
@@ -21,7 +21,7 @@ void Cell::UpdateMaterial(MaterialType type)
 	color = new_material->GetRandomColor();
 }
 
-MaterialType Cell::GetMaterial()
+Materials Cell::GetMaterial()
 {
 	return material;
 }

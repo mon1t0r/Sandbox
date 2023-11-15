@@ -4,8 +4,8 @@
 #include <cstdint>
 #include "field.h"
 
-#define FIELD_WIDTH 100
-#define FIELD_HEIGHT 50
+#define FIELD_WIDTH 200
+#define FIELD_HEIGHT 100
 
 void InitGame(HWND);
 void FreeGame();

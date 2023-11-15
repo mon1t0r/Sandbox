@@ -12,7 +12,7 @@ Field::Field(int width, int height, void(*matrix_updated_callback) ())
     for (int i = 0; i < width; ++i)
     {
         matrix[i] = new Cell[height];
-        matrix[i]->UpdateMaterial(MaterialType::AIR);
+        matrix[i]->UpdateMaterial(Materials::AIR);
     }
 }
 
@@ -25,12 +25,12 @@ Field::~Field()
 
 void Field::Update()
 {
-    for (int i = 0; i < MaterialType::MATERIALS_COUNT; ++i)
-        Material::FromType((MaterialType)i)->OnFieldUpdatePre(this);
+    for (int i = 0; i < Materials::MATERIALS_COUNT; ++i)
+        Material::FromType((Materials)i)->OnFieldUpdatePre(this);
 
     Cell* cell;
-	for (int i = 0; i < width; ++i)
-        for (int j = 0; j < height; ++j)
+	for (int j = 0; j < height; ++j)
+        for (int i = 0; i < width; ++i)
         {
             cell = &matrix[i][j];
             if (cell->IsUpdated())
@@ -43,8 +43,8 @@ void Field::Update()
         for (int j = 0; j < height; ++j)
             matrix[i][j].SetUpdated(false);
 
-    for (int i = 0; i < MaterialType::MATERIALS_COUNT; ++i)
-        Material::FromType((MaterialType)i)->OnFieldUpdatePost(this);
+    for (int i = 0; i < Materials::MATERIALS_COUNT; ++i)
+        Material::FromType((Materials)i)->OnFieldUpdatePost(this);
 }
 
 int Field::GetWidth()
@@ -57,15 +57,15 @@ int Field::GetHeight()
     return height;
 }
 
-void Field::SetPoint(int x, int y, MaterialType type)
+void Field::SetPoint(int x, int y, Materials material)
 {
     if (IsOutOfBounds(x, y))
         return;
-    matrix[x][y].UpdateMaterial(type);
+    matrix[x][y].UpdateMaterial(material);
     SetMatrixUpdated();
 }
 
-void Field::SetPoint(int x, int y, MaterialType type, int radius)
+void Field::SetPoint(int x, int y, Materials material, int radius)
 {
     int x_min = x - radius;
     int x_max = x + radius;
@@ -81,9 +81,9 @@ void Field::SetPoint(int x, int y, MaterialType type, int radius)
         for (int j = y_min; j <= y_max; ++j)
         {
             if (!IsOutOfBounds(i, j) && (i - x) * (i - x) + (j - y) * (j - y) < radius * radius &&
-                !(radius > 2 && Material::FromType(type)->IsCrumblySpawn() && rand() % 20))
+                !(radius > 2 && Material::FromType(material)->IsCrumblySpawn() && rand() % 20))
             {
-                matrix[i][j].UpdateMaterial(type);
+                matrix[i][j].UpdateMaterial(material);
                 flag = true;
             }
         } 
@@ -93,7 +93,7 @@ void Field::SetPoint(int x, int y, MaterialType type, int radius)
 }
 
 //https://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
-void Field::SetLine(int x1, int y1, int x2, int y2, MaterialType type, int line_width)
+void Field::SetLine(int x1, int y1, int x2, int y2, Materials material, int line_width)
 {
     int delta_x(x2 - x1);
     // if x1 == x2, then it does not matter what we set here
@@ -105,7 +105,7 @@ void Field::SetLine(int x1, int y1, int x2, int y2, MaterialType type, int line_
     signed char const iy((delta_y > 0) - (delta_y < 0));
     delta_y = std::abs(delta_y) << 1;
 
-    SetPoint(x1, y1, type, line_width);
+    SetPoint(x1, y1, material, line_width);
 
     if (delta_x >= delta_y)
     {
@@ -125,7 +125,7 @@ void Field::SetLine(int x1, int y1, int x2, int y2, MaterialType type, int line_
             error += delta_y;
             x1 += ix;
 
-            SetPoint(x1, y1, type, line_width);
+            SetPoint(x1, y1, material, line_width);
         }
     }
     else
@@ -146,7 +146,7 @@ void Field::SetLine(int x1, int y1, int x2, int y2, MaterialType type, int line_
             error += delta_x;
             y1 += iy;
 
-            SetPoint(x1, y1, type, line_width);
+            SetPoint(x1, y1, material, line_width);
         }
     }
 }
@@ -154,11 +154,11 @@ void Field::SetLine(int x1, int y1, int x2, int y2, MaterialType type, int line_
 void Field::MovePoint(int start_x, int start_y, int end_x, int end_y)
 {
     if (IsOutOfBounds(start_x, start_y) || IsOutOfBounds(end_x, end_y) ||
-        IsMaterial(start_x, start_y, MaterialType::AIR) || !IsMaterial(end_x, end_y, MaterialType::AIR))
+        IsMaterial(start_x, start_y, Materials::AIR) || !IsMaterial(end_x, end_y, Materials::AIR))
         return;
 
     matrix[end_x][end_y].CopyFrom(&matrix[start_x][start_y]);
-    matrix[start_x][start_y].UpdateMaterial(MaterialType::AIR);
+    matrix[start_x][start_y].UpdateMaterial(Materials::AIR);
 
     SetMatrixUpdated();
 }
@@ -188,12 +188,20 @@ bool Field::IsOutOfBounds(int x, int y)
     return x < 0 || y < 0 || x >= width || y >= height;
 }
 
-bool Field::IsMaterial(int x, int y, MaterialType type)
+bool Field::IsMaterial(int x, int y, Materials material)
 {
     if (IsOutOfBounds(x, y))
         return false;
 
-    return matrix[x][y].GetMaterial() == type;
+    return matrix[x][y].GetMaterial() == material;
+}
+
+bool Field::IsMaterialType(int x, int y, MaterialType type)
+{
+    if (IsOutOfBounds(x, y))
+        return false;
+
+    return Material::FromType(matrix[x][y].GetMaterial())->GetType() == type;
 }
 
 inline void Field::SetMatrixUpdated()
