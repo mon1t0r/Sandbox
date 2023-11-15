@@ -2,41 +2,38 @@
 #include "cell.h"
 #include "material.h"
 
+#include <algorithm>
+#include <random>
+
 Field::Field(int width, int height, void(*matrix_updated_callback) ())
 {
 	this->width = width;
 	this->height = height;
     this->matrix_updated_callback = matrix_updated_callback;
 
-	matrix_main = new Cell*[width];
+	matrix = new Cell*[width];
     for (int i = 0; i < width; ++i)
     {
-        matrix_main[i] = new Cell[height];
-        matrix_main[i]->UpdateMaterial(Materials::AIR);
+        matrix[i] = new Cell[height];
+        matrix[i]->UpdateMaterial(Materials::AIR);
     }
 
-    matrix_second = new Cell* [width];
-    for (int i = 0; i < width; ++i)
-        matrix_second[i] = new Cell[height];
+    shuffled_x_indexes.resize(width);
+    for (int i = 0; i < width; ++i) {
+        shuffled_x_indexes.at(i) = i;
+    }
 }
 
 Field::~Field()
 {
-    for (int i = 0; i < width; ++i)
-        delete[] matrix_second[i];
-    delete[] matrix_second;
-
 	for (int i = 0; i < width; ++i)
-		delete[] matrix_main[i];
-	delete[] matrix_main;
+		delete[] matrix[i];
+	delete[] matrix;
 }
 
 void Field::Update()
 {
-    processing_update = true;
-
-    for (int i = 0; i < width; ++i)
-        memcpy(matrix_second[i], matrix_main[i], height * sizeof(Cell));
+    ReshuffleXIndexes();
 
     for (int i = 0; i < Materials::MATERIALS_COUNT; ++i)
         Material::FromType((Materials)i)->OnFieldUpdatePre(this);
@@ -45,21 +42,19 @@ void Field::Update()
 	for (int j = 0; j < height; ++j)
         for (int i = 0; i < width; ++i)
         {
-            cell = &matrix_main[i][j];
+            cell = &matrix[shuffled_x_indexes[i]][j];
             if (cell->IsUpdated())
                 continue;
             cell->SetUpdated(true);
-            Material::FromType(cell->GetMaterial())->OnCellUpdate(this, i, j);
+            Material::FromType(cell->GetMaterial())->OnCellUpdate(this, shuffled_x_indexes[i], j);
         }
 
     for (int i = 0; i < width; ++i)
         for (int j = 0; j < height; ++j)
-            matrix_main[i][j].SetUpdated(false);
+            matrix[i][j].SetUpdated(false);
 
     for (int i = 0; i < Materials::MATERIALS_COUNT; ++i)
         Material::FromType((Materials)i)->OnFieldUpdatePost(this);
-
-    processing_update = false;
 }
 
 int Field::GetWidth()
@@ -76,7 +71,7 @@ void Field::SetPoint(int x, int y, Materials material)
 {
     if (IsOutOfBounds(x, y))
         return;
-    matrix_main[x][y].UpdateMaterial(material);
+    matrix[x][y].UpdateMaterial(material);
     SetMatrixUpdated();
 }
 
@@ -96,9 +91,9 @@ void Field::SetPoint(int x, int y, Materials material, int radius)
         for (int j = y_min; j <= y_max; ++j)
         {
             if (!IsOutOfBounds(i, j) && (i - x) * (i - x) + (j - y) * (j - y) < radius * radius &&
-                !(radius > 2 && Material::FromType(material)->IsCrumblySpawn() && rand() % 20))
+                !(radius > 1 && Material::FromType(material)->IsCrumblySpawn() && rand() % 20))
             {
-                matrix_main[i][j].UpdateMaterial(material);
+                matrix[i][j].UpdateMaterial(material);
                 flag = true;
             }
         } 
@@ -172,8 +167,8 @@ void Field::MovePoint(int start_x, int start_y, int end_x, int end_y)
         IsMaterial(start_x, start_y, Materials::AIR) || !IsMaterial(end_x, end_y, Materials::AIR))
         return;
 
-    matrix_main[end_x][end_y].CopyFrom(&matrix_main[start_x][start_y]);
-    matrix_main[start_x][start_y].UpdateMaterial(Materials::AIR);
+    matrix[end_x][end_y].CopyFrom(&matrix[start_x][start_y]);
+    matrix[start_x][start_y].UpdateMaterial(Materials::AIR);
 
     SetMatrixUpdated();
 }
@@ -183,9 +178,9 @@ void Field::SwapPoints(int x1, int y1, int x2, int y2)
     if (IsOutOfBounds(x1, y1) || IsOutOfBounds(x2, y2))
         return;
 
-    Cell cell = matrix_main[x1][y1];
-    matrix_main[x1][y1].CopyFrom(&matrix_main[x2][y2]);
-    matrix_main[x2][y2].CopyFrom(&cell);
+    Cell cell = matrix[x1][y1];
+    matrix[x1][y1].CopyFrom(&matrix[x2][y2]);
+    matrix[x2][y2].CopyFrom(&cell);
 
     SetMatrixUpdated();
 }
@@ -195,7 +190,7 @@ Cell* Field::GetCell(int x, int y)
     if (IsOutOfBounds(x, y))
         return nullptr;
 
-    return processing_update ? &matrix_second[x][y] : &matrix_main[x][y];
+    return &matrix[x][y];
 }
 
 bool Field::IsOutOfBounds(int x, int y)
@@ -208,7 +203,7 @@ bool Field::IsMaterial(int x, int y, Materials material)
     if (IsOutOfBounds(x, y))
         return false;
 
-    return (processing_update ? matrix_second[x][y] : matrix_main[x][y]).GetMaterial() == material;
+    return matrix[x][y].GetMaterial() == material;
 }
 
 bool Field::IsMaterialType(int x, int y, MaterialType type)
@@ -216,10 +211,16 @@ bool Field::IsMaterialType(int x, int y, MaterialType type)
     if (IsOutOfBounds(x, y))
         return false;
 
-    return Material::FromType((processing_update ? matrix_second[x][y] : matrix_main[x][y]).GetMaterial())->GetType() == type;
+    return Material::FromType(matrix[x][y].GetMaterial())->GetType() == type;
 }
 
 inline void Field::SetMatrixUpdated()
 {
     matrix_updated_callback();
+}
+
+void Field::ReshuffleXIndexes()
+{
+    auto rng = std::default_random_engine{};
+    std::shuffle(std::begin(shuffled_x_indexes), std::end(shuffled_x_indexes), rng);
 }

@@ -1,15 +1,16 @@
 #pragma once
 
+#include <vector>
+
 class Cell;
 enum Materials : unsigned int;
 enum MaterialType : unsigned int;
 
 class Field
 {
-	Cell** matrix_main = nullptr;
-	Cell** matrix_second = nullptr;
+	Cell** matrix = nullptr;
 	int width = 0, height = 0;
-	bool processing_update = false;
+	std::vector<int> shuffled_x_indexes;
 	void(*matrix_updated_callback) ();
 
 public:
@@ -36,4 +37,5 @@ public:
 
 private:
 	inline void SetMatrixUpdated();
+	void ReshuffleXIndexes();
 };
