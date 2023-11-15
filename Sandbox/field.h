@@ -6,8 +6,10 @@ enum MaterialType : unsigned int;
 
 class Field
 {
-	Cell** matrix = nullptr;
+	Cell** matrix_main = nullptr;
+	Cell** matrix_second = nullptr;
 	int width = 0, height = 0;
+	bool processing_update = false;
 	void(*matrix_updated_callback) ();
 
 public:

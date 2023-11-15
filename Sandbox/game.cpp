@@ -8,8 +8,6 @@
 #include "visual.h"
 #include "material.h"
 
-#define DRAW_RADIUS 3
-
 void HandleMouse();
 std::tuple<int, int> GetMousePos(uint32_t, uint32_t);
 

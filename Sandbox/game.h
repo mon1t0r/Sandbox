@@ -6,6 +6,7 @@
 
 #define FIELD_WIDTH 200
 #define FIELD_HEIGHT 100
+#define DRAW_RADIUS 3
 
 void InitGame(HWND);
 void FreeGame();

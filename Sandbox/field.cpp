@@ -8,23 +8,36 @@ Field::Field(int width, int height, void(*matrix_updated_callback) ())
 	this->height = height;
     this->matrix_updated_callback = matrix_updated_callback;
 
-	matrix = new Cell*[width];
+	matrix_main = new Cell*[width];
     for (int i = 0; i < width; ++i)
     {
-        matrix[i] = new Cell[height];
-        matrix[i]->UpdateMaterial(Materials::AIR);
+        matrix_main[i] = new Cell[height];
+        matrix_main[i]->UpdateMaterial(Materials::AIR);
     }
+
+    matrix_second = new Cell* [width];
+    for (int i = 0; i < width; ++i)
+        matrix_second[i] = new Cell[height];
 }
 
 Field::~Field()
 {
+    for (int i = 0; i < width; ++i)
+        delete[] matrix_second[i];
+    delete[] matrix_second;
+
 	for (int i = 0; i < width; ++i)
-		delete[] matrix[i];
-	delete[] matrix;
+		delete[] matrix_main[i];
+	delete[] matrix_main;
 }
 
 void Field::Update()
 {
+    processing_update = true;
+
+    for (int i = 0; i < width; ++i)
+        memcpy(matrix_second[i], matrix_main[i], height * sizeof(Cell));
+
     for (int i = 0; i < Materials::MATERIALS_COUNT; ++i)
         Material::FromType((Materials)i)->OnFieldUpdatePre(this);
 
@@ -32,7 +45,7 @@ void Field::Update()
 	for (int j = 0; j < height; ++j)
         for (int i = 0; i < width; ++i)
         {
-            cell = &matrix[i][j];
+            cell = &matrix_main[i][j];
             if (cell->IsUpdated())
                 continue;
             cell->SetUpdated(true);
@@ -41,10 +54,12 @@ void Field::Update()
 
     for (int i = 0; i < width; ++i)
         for (int j = 0; j < height; ++j)
-            matrix[i][j].SetUpdated(false);
+            matrix_main[i][j].SetUpdated(false);
 
     for (int i = 0; i < Materials::MATERIALS_COUNT; ++i)
         Material::FromType((Materials)i)->OnFieldUpdatePost(this);
+
+    processing_update = false;
 }
 
 int Field::GetWidth()
@@ -61,7 +76,7 @@ void Field::SetPoint(int x, int y, Materials material)
 {
     if (IsOutOfBounds(x, y))
         return;
-    matrix[x][y].UpdateMaterial(material);
+    matrix_main[x][y].UpdateMaterial(material);
     SetMatrixUpdated();
 }
 
@@ -83,7 +98,7 @@ void Field::SetPoint(int x, int y, Materials material, int radius)
             if (!IsOutOfBounds(i, j) && (i - x) * (i - x) + (j - y) * (j - y) < radius * radius &&
                 !(radius > 2 && Material::FromType(material)->IsCrumblySpawn() && rand() % 20))
             {
-                matrix[i][j].UpdateMaterial(material);
+                matrix_main[i][j].UpdateMaterial(material);
                 flag = true;
             }
         } 
@@ -157,8 +172,8 @@ void Field::MovePoint(int start_x, int start_y, int end_x, int end_y)
         IsMaterial(start_x, start_y, Materials::AIR) || !IsMaterial(end_x, end_y, Materials::AIR))
         return;
 
-    matrix[end_x][end_y].CopyFrom(&matrix[start_x][start_y]);
-    matrix[start_x][start_y].UpdateMaterial(Materials::AIR);
+    matrix_main[end_x][end_y].CopyFrom(&matrix_main[start_x][start_y]);
+    matrix_main[start_x][start_y].UpdateMaterial(Materials::AIR);
 
     SetMatrixUpdated();
 }
@@ -168,9 +183,9 @@ void Field::SwapPoints(int x1, int y1, int x2, int y2)
     if (IsOutOfBounds(x1, y1) || IsOutOfBounds(x2, y2))
         return;
 
-    Cell cell = matrix[x1][y1];
-    matrix[x1][y1].CopyFrom(&matrix[x2][y2]);
-    matrix[x2][y2].CopyFrom(&cell);
+    Cell cell = matrix_main[x1][y1];
+    matrix_main[x1][y1].CopyFrom(&matrix_main[x2][y2]);
+    matrix_main[x2][y2].CopyFrom(&cell);
 
     SetMatrixUpdated();
 }
@@ -180,7 +195,7 @@ Cell* Field::GetCell(int x, int y)
     if (IsOutOfBounds(x, y))
         return nullptr;
 
-    return &matrix[x][y];
+    return processing_update ? &matrix_second[x][y] : &matrix_main[x][y];
 }
 
 bool Field::IsOutOfBounds(int x, int y)
@@ -193,7 +208,7 @@ bool Field::IsMaterial(int x, int y, Materials material)
     if (IsOutOfBounds(x, y))
         return false;
 
-    return matrix[x][y].GetMaterial() == material;
+    return (processing_update ? matrix_second[x][y] : matrix_main[x][y]).GetMaterial() == material;
 }
 
 bool Field::IsMaterialType(int x, int y, MaterialType type)
@@ -201,7 +216,7 @@ bool Field::IsMaterialType(int x, int y, MaterialType type)
     if (IsOutOfBounds(x, y))
         return false;
 
-    return Material::FromType(matrix[x][y].GetMaterial())->GetType() == type;
+    return Material::FromType((processing_update ? matrix_second[x][y] : matrix_main[x][y]).GetMaterial())->GetType() == type;
 }
 
 inline void Field::SetMatrixUpdated()
